@@ -2,24 +2,23 @@ blueprint:
   name: MQTT - Button action blueprint
   description: Blueprint for mapping button actions to light changes.
   domain: automation
-input:
-  button:
-    Name: Knap
-    Description: Den knap der styrer lyset
-  target:
-    Name: Lamper
-    Description: Den/de lamper der skal styres
-input: target
-triggers:
-  - trigger: device
-    domain: mqtt
-    device_id: !input button
-    type: action
-    subtype: "on"
-actions:
-  - action: light.toggle
-    metadata: {}
-    data: {}
+  input:
+    button:
+      Name: Knap
+      Description: Den knap der styrer lyset
     target:
-      device_id: !input target
-mode: single
+      Name: Lamper
+      Description: Den/de lamper der skal styres
+  triggers:
+    - trigger: device
+      domain: mqtt
+      device_id: !input button
+      type: action
+      subtype: "on"
+  actions:
+    - action: light.toggle
+      metadata: {}
+      data: {}
+      target:
+        device_id: !input target
+  mode: single
