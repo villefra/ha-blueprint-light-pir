@@ -1,33 +1,46 @@
 blueprint:
-  name: Button control
-  description: Turn a light on/off based on button press
+  name: Toggle-button to control light
+  description: This blueprint allows a button to toggle a light in Home Assistant
   domain: automation
   input:
-    button:
+    buttondevice:
       name: Knap
       description: Denne knap styrer lyset.
       selector:
         entity:
           filter:
-            - domain: device
-            - device_class: mqtt
-    target_light:
+            - domain: mqtt
+    lightdevice:
       name: Lys
       description: Disse lamper styres.
       selector:
         target:
           entity:
             - domain: light
-
 triggers:
-  - trigger: state
-    entity_id: !input knap
+  - domain: mqtt
+    device_id: !buttondevice
+    type: action
+    subtype: off_top
+    trigger: device
 
 actions:
-  - action: >
-      {% if trigger.to_state.state == "on" %}
-        light.turn_on
-      {% else %}
-        light.turn_off
-      {% endif %}
-    target: !input target_light
+  - if:
+      - condition: numeric_state
+        entity_id: !lightdevice
+        attribute: brightness
+        above: 30
+    then:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          device_id: !lightdevice
+    else:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 100
+        target:
+          device_id: !lightdevice
+mode: single
