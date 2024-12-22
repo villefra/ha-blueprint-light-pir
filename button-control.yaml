@@ -29,12 +29,3 @@ action:
   - conditions:
     - condition: template
       value_template: '{{ trigger.event.data.command == "on" }}'
-    sequence: !input 'button_single'
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.command == "off" }}'
-    sequence: !input 'button_double'
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.command == "move_with_on_off" }}'
-    sequence: !input 'button_long'
