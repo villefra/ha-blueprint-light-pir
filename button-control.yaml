@@ -9,16 +9,16 @@ blueprint:
     target:
       Name: Lamper
       Description: Den/de lamper der skal styres
-  triggers:
-    - trigger: device
-      domain: mqtt
-      device_id: !input button
-      type: action
-      subtype: "on"
-  actions:
-    - action: light.toggle
-      metadata: {}
-      data: {}
-      target:
-        device_id: !input target
-  mode: single
+triggers:
+  - trigger: device
+    domain: mqtt
+    device_id: !input button
+    type: action
+    subtype: "on"
+actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      device_id: !input target
+mode: single
