@@ -1,19 +1,19 @@
 blueprint:
-  name: Motion Light Tutorial
-  description: Turn a light on based on detected motion
+  name: Button control
+  description: Turn a light on/off based on button press
   domain: automation
   input:
-    motion_sensor:
-      name: Motion Sensor
-      description: This sensor will be synchronized with the light.
+    button:
+      name: Knap
+      description: Denne knap styrer lyset.
       selector:
         entity:
           filter:
-            - domain: binary_sensor
-            - device_class: motion
+            - domain: mqtt
+            - device_class: device
     target_light:
-      name: Lights
-      description: The lights to keep in sync.
+      name: Lys
+      description: Disse lamper styres.
       selector:
         target:
           entity:
@@ -21,7 +21,7 @@ blueprint:
 
 triggers:
   - trigger: state
-    entity_id: !input motion_sensor
+    entity_id: !input knap
 
 actions:
   - action: >
