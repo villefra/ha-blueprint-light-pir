@@ -1,0 +1,81 @@
+blueprint:
+  name: Override PIR-activated Light
+  description: Override PIR automated switching of light when light is manually turned on
+  domain: automation
+  source_url: https://gist.github.com/vanceb/b7402b9d1f66a6a2fb5c8e6de2a39b26
+  input:
+    light_target:
+      name: Light
+      selector:
+        entity:
+          domain: light
+    auto_script:
+      name: Light PIR Script
+      selector:
+        entity:
+          domain: automation
+    reenable_after:
+      name: Re-enable Automation After
+      description: How long after manual turn on to turn off light and re-enable automated behaviour.
+      default: 3
+      selector:
+        number:
+          min: 0
+          max: 12
+          unit_of_measurement: hours
+
+# we restart the script, so we can tuen the light off and re-enable automated PIR action
+mode: restart
+max_exceeded: silent
+
+variables:
+  light_target:   !input 'light_target'
+  auto_script:    !input 'auto_script'
+  reenable_after: !input 'reenable_after'
+
+trigger:
+# Any change to the state of the light (on or off)
+# Made more specific to stop trigger by attribute changes
+  - platform: state
+    entity_id: !input light_target
+    from: "on"
+    to: "off"
+  - platform: state
+    entity_id: !input light_target
+    from: "off"
+    to: "on"
+
+action:
+  - delay: 1  # Avoid race condition
+  - choose:
+# Light turned on manually
+    - conditions: >
+        {{ trigger.to_state.state == "on" and
+           is_state_attr(auto_script, "current", 0) }}
+      sequence:
+        - service:    automation.turn_off
+          entity_id:  !input 'auto_script'
+        - delay:      "{{ (reenable_after | int) * 3600 }}"
+        - service:    automation.turn_on
+          entity_id:  !input 'auto_script'
+# Light turned off after being turned on manually
+#   PIR script not enabled, so re-enable
+    - conditions: >
+        {{ trigger.to_state.state == "off" and
+           is_state(auto_script, "off") }}
+      sequence:
+        - service:    automation.turn_on
+          entity_id:  !input 'auto_script'
+# Light turned off while PIR script is still running
+#    Maybe turned off automatically by PIR script or manually
+#    No way of telling (Race condition), so need to reset script
+    - conditions: >
+        {{ trigger.to_state.state == "off" and
+           is_state_attr(auto_script, "current", 1) }}
+      sequence:
+        - service:    automation.turn_off
+          entity_id:  !input 'auto_script'
+        - service:    automation.turn_on
+          entity_id:  !input 'auto_script'
+          
+# All other trigger states need no action
