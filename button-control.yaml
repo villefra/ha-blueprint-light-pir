@@ -9,8 +9,8 @@ blueprint:
       selector:
         entity:
           filter:
-            - domain: mqtt
-            - device_class: device
+            - domain: device
+            - device_class: mqtt
     target_light:
       name: Lys
       description: Disse lamper styres.
