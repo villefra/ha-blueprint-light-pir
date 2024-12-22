@@ -2,10 +2,10 @@
 
 blueprint:
   name: MQTT - IKEA TRÅDFRI Shortcut Button
-  description: Home Assistant automation Blueprint for the TRÅDFRI Shortcut Button, supports single, double and long presses.
+  description: Home Assistant automation Blueprint for buttons.
   domain: automation
   input:
-    shortcut_button:
+    button:
       name: Device
       description: Select a device...
       selector:
@@ -14,18 +14,6 @@ blueprint:
     button_single:
       name: Single Click
       description: 'Single-Click action(s):'
-      default: []
-      selector:
-        action: {}
-    button_double:
-      name: Double Click
-      description: 'Double-Click action(s):'
-      default: []
-      selector:
-        action: {}
-    button_long:
-      name: Long Press
-      description: 'Long press action(s):'
       default: []
       selector:
         action: {}
