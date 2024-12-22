@@ -1,31 +1,19 @@
-# Ikea Shortcut Button Blueprint for Home Assistant
-
 blueprint:
-  name: MQTT - IKEA TRÅDFRI Shortcut Button
-  description: Home Assistant automation Blueprint for buttons.
+  name: MQTT - Button action blueprint
+  description: Blueprint for mapping button actions to light changes.
   domain: automation
-  input:
-    button:
-      name: Device
-      description: Select a device...
-      selector:
-        device:
-          integration: mqtt
-    button_single:
-      name: Single Click
-      description: 'Single-Click action(s):'
-      default: []
-      selector:
-        action: {}
+input: button
+input: target
+triggers:
+  - trigger: device
+    domain: mqtt
+    device_id: !input button
+    type: action
+    subtype: "on"
+actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      device_id: !input target
 mode: single
-max_exceeded: silent
-trigger:
-- platform: event
-  event_type: mqtt_event
-  event_data:
-    device_id: !input 'shortcut_button'
-action:
-- choose:
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.command == "on" }}'
